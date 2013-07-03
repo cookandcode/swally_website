@@ -3,7 +3,7 @@
   window.myApp.controller('mapController', [
     'Stats', '$scope', function(Stats, $scope) {
       return $scope.allStats = Stats.query(function() {
-        var k, lat_plus_long, map, mapOptions, marker, myLatlng, stat, tab_stats, _ref, _results;
+        var city, infowindow, k, map, mapOptions, marker, myLatlng, stat, tab_stats, _ref, _results;
         mapOptions = {
           center: new google.maps.LatLng(46.75984, 1.738281),
           zoom: 5,
@@ -12,28 +12,37 @@
         map = new google.maps.Map(document.getElementById("map"), mapOptions);
         tab_stats = {};
         _ref = $scope.allStats;
-        _results = [];
         for (k in _ref) {
           stat = _ref[k];
-          lat_plus_long = stat.lat + stat.long;
-          if (tab_stats[lat_plus_long]) {
-            tab_stats[lat_plus_long]++;
-            console.log('OK');
+          if (tab_stats[stat.city]) {
+            tab_stats[stat.city]['swallow'] += stat.swallow;
           } else {
-            tab_stats[lat_plus_long] = 1;
-            console.log('NOT OK');
+            tab_stats[stat.city] = {
+              location: {
+                lat: stat.lat,
+                long: stat.long
+              },
+              city: stat.city,
+              swallow: stat.swallow
+            };
           }
-          if (parseInt(k) === 10) {
-            myLatlng = new google.maps.LatLng(stat.lat, stat.long);
-            _results.push(marker = new google.maps.Marker({
-              position: myLatlng,
-              map: map,
-              animation: google.maps.Animation.DROP,
-              title: "Hello World!"
-            }));
-          } else {
-            _results.push(void 0);
-          }
+        }
+        _results = [];
+        for (city in tab_stats) {
+          stat = tab_stats[city];
+          myLatlng = new google.maps.LatLng(stat.location.lat, stat.location.long);
+          infowindow = new google.maps.InfoWindow({
+            content: stat.swallow + ' gorgee(s) bue(s) a ' + city
+          });
+          marker = new google.maps.Marker({
+            position: myLatlng,
+            map: map,
+            clickable: true,
+            animation: google.maps.Animation.DROP
+          });
+          _results.push(google.maps.event.addListener(marker, 'click', function() {
+            return infowindow.open(map, marker);
+          }));
         }
         return _results;
       });

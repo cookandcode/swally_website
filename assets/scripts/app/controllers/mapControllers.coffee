@@ -9,24 +9,37 @@ window.myApp.controller('mapController', ['Stats','$scope', (Stats, $scope)->
         map = new google.maps.Map(document.getElementById("map"),mapOptions);
 
         tab_stats = {}
+        # COUNT THE NUMBER OF SWALLOW DRUNK IN THE CITY
         for k, stat of $scope.allStats
-            lat_plus_long = stat.lat + stat.long
-            if tab_stats[lat_plus_long]
-                tab_stats[lat_plus_long]++
-                console.log 'OK'
+            if tab_stats[stat.city]
+                tab_stats[stat.city]['swallow']+= stat.swallow
             else
-                tab_stats[lat_plus_long] = 1
-                console.log 'NOT OK'
+                tab_stats[stat.city] = 
+                    location: 
+                        lat: stat.lat
+                        long: stat.long
+                    city: stat.city
+                    swallow : stat.swallow
 
-            if parseInt(k) == 10
-                myLatlng = new google.maps.LatLng(stat.lat,stat.long);
 
-                marker = new google.maps.Marker({
-                  position: myLatlng,
-                  map: map,
-                  animation: google.maps.Animation.DROP,
-                  title:"Hello World!"
-                });
+        # PLACE THE MARKER ON THE MAP
+        for city, stat of tab_stats
+            myLatlng = new google.maps.LatLng(stat.location.lat,stat.location.long);
+
+            infowindow = new google.maps.InfoWindow({
+                content: stat.swallow+' gorgee(s) bue(s) a '+city
+            });
+
+            marker = new google.maps.Marker({
+              position: myLatlng,
+              map: map,
+              clickable: true,
+              animation: google.maps.Animation.DROP,
+            })
+
+            google.maps.event.addListener(marker, 'click', ()->
+              infowindow.open(map, marker);
+            )
 
     )
 
