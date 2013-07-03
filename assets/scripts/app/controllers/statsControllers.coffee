@@ -1,4 +1,4 @@
-window.myApp.controller('mapController', ['Stats','StatsShared', '$scope', (Stats, StatsShared, $scope)->
+window.myApp.controller('statController', ['Stats','StatsShared', '$scope', (Stats, StatsShared, $scope)->
     # $scope.allStats = Stats.query(()->
 
     #     mapOptions = {
@@ -45,6 +45,9 @@ window.myApp.controller('mapController', ['Stats','StatsShared', '$scope', (Stat
     
     StatsShared.getStats(()->
         $scope.allStats = StatsShared.allStatsByCity
+        $scope.ranked_cities = StatsShared.ranking_tab
+
+        console.log $scope.ranked_cities
         mapOptions = {
           center: new google.maps.LatLng(46.75984, 1.738281),
           zoom: 5,
