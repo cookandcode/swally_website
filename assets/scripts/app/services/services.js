@@ -8,10 +8,14 @@
 
   window.myApp.factory('StatsShared', [
     '$resource', 'Stats', function($resource, Stats) {
-      var statsShared;
+      var ratio_coit, ratio_cuite, ratio_degeulis, ratio_verre, statsShared;
       statsShared = {};
       statsShared.ranking_tab = [];
       statsShared.allStatsByCity = {};
+      ratio_verre = 3;
+      ratio_cuite = 20;
+      ratio_coit = 30;
+      ratio_degeulis = 50;
       statsShared.getStats = function(callback, refresh) {
         if (refresh == null) {
           refresh = false;
@@ -31,13 +35,21 @@
                     long: stat.long
                   },
                   city: stat.city,
-                  swallow: stat.swallow
+                  swallow: stat.swallow,
+                  verre: 0,
+                  cuite: 0,
+                  coit: 0,
+                  degeulis: 0
                 };
               }
             }
             _ref1 = statsShared.allStatsByCity;
             for (city in _ref1) {
               stat = _ref1[city];
+              stat.verre = parseInt(stat.swallow / ratio_verre * 100) / 100;
+              stat.cuite = parseInt(stat.swallow / ratio_cuite * 100) / 100;
+              stat.coit = parseInt(stat.swallow / ratio_coit * 100) / 100;
+              stat.degueulis = parseInt(stat.swallow / ratio_degeulis * 100) / 100;
               statsShared.ranking_tab.push(stat);
             }
             statsShared.ranking_tab.sort(function(a, b) {

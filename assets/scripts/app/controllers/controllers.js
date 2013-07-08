@@ -3,7 +3,7 @@
   window.myApp.controller('statController', [
     'Stats', 'StatsShared', '$scope', function(Stats, StatsShared, $scope) {
       return StatsShared.getStats(function() {
-        var city, infowindow, map, mapOptions, marker, myLatlng, stat, _ref, _results;
+        var city, i, infowindow, map, mapOptions, marker, myLatlng, stat, text, _fn, _ref;
         $scope.allStats = StatsShared.allStatsByCity;
         $scope.ranked_cities = StatsShared.ranking_tab;
         console.log($scope.ranked_cities);
@@ -13,25 +13,33 @@
           mapTypeId: google.maps.MapTypeId.ROADMAP
         };
         map = new google.maps.Map(document.getElementById("map"), mapOptions);
+        marker = {};
+        infowindow = {};
+        i = -1;
         _ref = $scope.allStats;
-        _results = [];
+        _fn = function(i) {
+          return google.maps.event.addListener(marker[i], 'click', function() {
+            infowindow[i].open(map, marker[i]);
+            return true;
+          });
+        };
         for (city in _ref) {
           stat = _ref[city];
+          i++;
           myLatlng = new google.maps.LatLng(stat.location.lat, stat.location.long);
-          infowindow = new google.maps.InfoWindow({
-            content: stat.swallow + ' gorgee(s) bue(s) a ' + city
+          text = stat.swallow + ' gorgee(s) bue(s) <br/> soit ' + stat.verre + ' verre, <br/> soit ' + stat.cuite + ' cuite, <br/> soit ' + stat.coit + ' coit, <br/> soit ' + stat.degueulis + ' degueulis, a ' + city;
+          infowindow[i] = new google.maps.InfoWindow({
+            content: text
           });
-          marker = new google.maps.Marker({
+          marker[i] = new google.maps.Marker({
             position: myLatlng,
             map: map,
             clickable: true,
             animation: google.maps.Animation.DROP
           });
-          _results.push(google.maps.event.addListener(marker, 'click', function() {
-            return infowindow.open(map, marker);
-          }));
+          _fn(i);
         }
-        return _results;
+        return true;
       });
     }
   ]);

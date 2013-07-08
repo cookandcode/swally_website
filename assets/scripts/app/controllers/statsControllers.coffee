@@ -56,25 +56,35 @@ window.myApp.controller('statController', ['Stats','StatsShared', '$scope', (Sta
         map = new google.maps.Map(document.getElementById("map"),mapOptions);
 
 
-
+        marker = {}
+        infowindow = {}
+        i = -1
         # PLACE THE MARKER ON THE MAP
         for city, stat of $scope.allStats
+            i++
+
             myLatlng = new google.maps.LatLng(stat.location.lat,stat.location.long);
 
-            infowindow = new google.maps.InfoWindow({
-                content: stat.swallow+' gorgee(s) bue(s) a '+city
+            text = stat.swallow+' gorgee(s) bue(s) <br/> soit '+stat.verre+' verre, <br/> soit '+stat.cuite+' cuite, <br/> soit '+stat.coit+' coit, <br/> soit '+stat.degueulis+' degueulis, a '+city
+            infowindow[i] = new google.maps.InfoWindow({
+                content: text
             });
 
-            marker = new google.maps.Marker({
+            marker[i] = new google.maps.Marker({
               position: myLatlng,
               map: map,
               clickable: true,
-              animation: google.maps.Animation.DROP,
+              animation: google.maps.Animation.DROP, 
             })
 
-            google.maps.event.addListener(marker, 'click', ()->
-              infowindow.open(map, marker);
-            )
+            do (i)->
+                google.maps.event.addListener(marker[i], 'click', ()->
+                    infowindow[i].open(map, marker[i]);
+                    true
+                )
+
+
+        true
 
     )
 
