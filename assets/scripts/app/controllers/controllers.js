@@ -3,7 +3,7 @@
   window.myApp.controller('statController', [
     'Stats', 'StatsShared', '$scope', function(Stats, StatsShared, $scope) {
       return StatsShared.getStats(function() {
-        var city, i, infowindow, map, mapOptions, marker, myLatlng, stat, text, _fn, _ref;
+        var city, i, infowindow, map, mapOptions, marker, myLatlng, stat, text, _ref;
         $scope.allStats = StatsShared.allStatsByCity;
         $scope.ranked_cities = StatsShared.ranking_tab;
         console.log($scope.ranked_cities);
@@ -17,27 +17,28 @@
         infowindow = {};
         i = -1;
         _ref = $scope.allStats;
-        _fn = function(i) {
-          return google.maps.event.addListener(marker[i], 'click', function() {
-            infowindow[i].open(map, marker[i]);
-            return true;
-          });
-        };
         for (city in _ref) {
           stat = _ref[city];
-          i++;
-          myLatlng = new google.maps.LatLng(stat.location.lat, stat.location.long);
-          text = stat.swallow + ' gorgee(s) bue(s) <br/> soit ' + stat.verre + ' verre, <br/> soit ' + stat.cuite + ' cuite, <br/> soit ' + stat.coit + ' coit, <br/> soit ' + stat.degueulis + ' degueulis, a ' + city;
-          infowindow[i] = new google.maps.InfoWindow({
-            content: text
-          });
-          marker[i] = new google.maps.Marker({
-            position: myLatlng,
-            map: map,
-            clickable: true,
-            animation: google.maps.Animation.DROP
-          });
-          _fn(i);
+          if ((stat.location.lat + stat.location.long) !== 0) {
+            i++;
+            myLatlng = new google.maps.LatLng(stat.location.lat, stat.location.long);
+            text = stat.swallow + ' gorgee(s) bue(s) <br/> soit ' + stat.verre + ' verre, <br/> soit ' + stat.cuite + ' cuite, <br/> soit ' + stat.coit + ' coit, <br/> soit ' + stat.degueulis + ' degueulis, a ' + city;
+            infowindow[i] = new google.maps.InfoWindow({
+              content: text
+            });
+            marker[i] = new google.maps.Marker({
+              position: myLatlng,
+              map: map,
+              clickable: true,
+              animation: google.maps.Animation.DROP
+            });
+            (function(i) {
+              return google.maps.event.addListener(marker[i], 'click', function() {
+                infowindow[i].open(map, marker[i]);
+                return true;
+              });
+            })(i);
+          }
         }
         return true;
       });
