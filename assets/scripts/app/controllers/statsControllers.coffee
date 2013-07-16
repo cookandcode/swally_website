@@ -61,27 +61,27 @@ window.myApp.controller('statController', ['Stats','StatsShared', '$scope', (Sta
         i = -1
         # PLACE THE MARKER ON THE MAP
         for city, stat of $scope.allStats
-            i++
+            if (stat.location.lat + stat.location.long) != 0
+                i++
+                myLatlng = new google.maps.LatLng(stat.location.lat,stat.location.long);
 
-            myLatlng = new google.maps.LatLng(stat.location.lat,stat.location.long);
+                text = stat.swallow+' gorgee(s) bue(s) <br/> soit '+stat.verre+' verre, <br/> soit '+stat.cuite+' cuite, <br/> soit '+stat.coit+' coit, <br/> soit '+stat.degueulis+' degueulis, a '+city
+                infowindow[i] = new google.maps.InfoWindow({
+                    content: text
+                });
 
-            text = stat.swallow+' gorgee(s) bue(s) <br/> soit '+stat.verre+' verre, <br/> soit '+stat.cuite+' cuite, <br/> soit '+stat.coit+' coit, <br/> soit '+stat.degueulis+' degueulis, a '+city
-            infowindow[i] = new google.maps.InfoWindow({
-                content: text
-            });
+                marker[i] = new google.maps.Marker({
+                  position: myLatlng,
+                  map: map,
+                  clickable: true,
+                  animation: google.maps.Animation.DROP, 
+                })
 
-            marker[i] = new google.maps.Marker({
-              position: myLatlng,
-              map: map,
-              clickable: true,
-              animation: google.maps.Animation.DROP, 
-            })
-
-            do (i)->
-                google.maps.event.addListener(marker[i], 'click', ()->
-                    infowindow[i].open(map, marker[i]);
-                    true
-                )
+                do (i)->
+                    google.maps.event.addListener(marker[i], 'click', ()->
+                        infowindow[i].open(map, marker[i]);
+                        true
+                    )
 
 
         true
